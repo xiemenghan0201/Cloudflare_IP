@@ -1,0 +1,289 @@
+proxies:
+- name: US_CF优选_1
+  type: vless
+  server: 45.13.214.27
+  port: 443
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
+  tls: true
+  servername: xiemenghan0201.ccwu.cc
+  network: ws
+  client-fingerprint: chrome
+  ws-opts:
+    path: /
+    headers:
+      Host: xiemenghan0201.ccwu.cc
+- name: US_CF优选_2
+  type: vless
+  server: 104.129.167.255
+  port: 443
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
+  tls: true
+  servername: xiemenghan0201.ccwu.cc
+  network: ws
+  client-fingerprint: chrome
+  ws-opts:
+    path: /
+    headers:
+      Host: xiemenghan0201.ccwu.cc
+- name: US_CF优选_3
+  type: vless
+  server: 104.129.167.255
+  port: 443
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
+  tls: true
+  servername: xiemenghan0201.ccwu.cc
+  network: ws
+  client-fingerprint: chrome
+  ws-opts:
+    path: /
+    headers:
+      Host: xiemenghan0201.ccwu.cc
+- name: US_CF优选_4
+  type: vless
+  server: 104.129.167.255
+  port: 443
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
+  tls: true
+  servername: xiemenghan0201.ccwu.cc
+  network: ws
+  client-fingerprint: chrome
+  ws-opts:
+    path: /
+    headers:
+      Host: xiemenghan0201.ccwu.cc
+- name: US_CF优选_5
+  type: vless
+  server: 156.154.245.83
+  port: 443
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
+  tls: true
+  servername: xiemenghan0201.ccwu.cc
+  network: ws
+  client-fingerprint: chrome
+  ws-opts:
+    path: /
+    headers:
+      Host: xiemenghan0201.ccwu.cc
+- name: US_CF优选_6
+  type: vless
+  server: 104.129.167.255
+  port: 443
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
+  tls: true
+  servername: xiemenghan0201.ccwu.cc
+  network: ws
+  client-fingerprint: chrome
+  ws-opts:
+    path: /
+    headers:
+      Host: xiemenghan0201.ccwu.cc
+- name: US_CF优选_7
+  type: vless
+  server: 165.232.51.34
+  port: 443
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
+  tls: true
+  servername: xiemenghan0201.ccwu.cc
+  network: ws
+  client-fingerprint: chrome
+  ws-opts:
+    path: /
+    headers:
+      Host: xiemenghan0201.ccwu.cc
+- name: US_CF优选_8
+  type: vless
+  server: 155.94.173.121
+  port: 443
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
+  tls: true
+  servername: xiemenghan0201.ccwu.cc
+  network: ws
+  client-fingerprint: chrome
+  ws-opts:
+    path: /
+    headers:
+      Host: xiemenghan0201.ccwu.cc
+- name: US_CF优选_9
+  type: vless
+  server: 104.129.166.131
+  port: 443
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
+  tls: true
+  servername: xiemenghan0201.ccwu.cc
+  network: ws
+  client-fingerprint: chrome
+  ws-opts:
+    path: /
+    headers:
+      Host: xiemenghan0201.ccwu.cc
+- name: US_CF优选_10
+  type: vless
+  server: 192.9.157.76
+  port: 443
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
+  tls: true
+  servername: xiemenghan0201.ccwu.cc
+  network: ws
+  client-fingerprint: chrome
+  ws-opts:
+    path: /
+    headers:
+      Host: xiemenghan0201.ccwu.cc
+- name: US_CF优选_11
+  type: vless
+  server: 23.94.56.22
+  port: 443
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
+  tls: true
+  servername: xiemenghan0201.ccwu.cc
+  network: ws
+  client-fingerprint: chrome
+  ws-opts:
+    path: /
+    headers:
+      Host: xiemenghan0201.ccwu.cc
+- name: US_CF优选_12
+  type: vless
+  server: 104.129.166.131
+  port: 443
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
+  tls: true
+  servername: xiemenghan0201.ccwu.cc
+  network: ws
+  client-fingerprint: chrome
+  ws-opts:
+    path: /
+    headers:
+      Host: xiemenghan0201.ccwu.cc
+- name: US_CF优选_13
+  type: vless
+  server: 64.118.154.7
+  port: 443
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
+  tls: true
+  servername: xiemenghan0201.ccwu.cc
+  network: ws
+  client-fingerprint: chrome
+  ws-opts:
+    path: /
+    headers:
+      Host: xiemenghan0201.ccwu.cc
+- name: US_CF优选_14
+  type: vless
+  server: 192.3.251.89
+  port: 443
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
+  tls: true
+  servername: xiemenghan0201.ccwu.cc
+  network: ws
+  client-fingerprint: chrome
+  ws-opts:
+    path: /
+    headers:
+      Host: xiemenghan0201.ccwu.cc
+- name: US_CF优选_15
+  type: vless
+  server: 104.129.166.131
+  port: 443
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
+  tls: true
+  servername: xiemenghan0201.ccwu.cc
+  network: ws
+  client-fingerprint: chrome
+  ws-opts:
+    path: /
+    headers:
+      Host: xiemenghan0201.ccwu.cc
+- name: US_CF优选_16
+  type: vless
+  server: 168.151.20.157
+  port: 443
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
+  tls: true
+  servername: xiemenghan0201.ccwu.cc
+  network: ws
+  client-fingerprint: chrome
+  ws-opts:
+    path: /
+    headers:
+      Host: xiemenghan0201.ccwu.cc
+- name: US_CF优选_17
+  type: vless
+  server: 104.129.166.131
+  port: 443
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
+  tls: true
+  servername: xiemenghan0201.ccwu.cc
+  network: ws
+  client-fingerprint: chrome
+  ws-opts:
+    path: /
+    headers:
+      Host: xiemenghan0201.ccwu.cc
+- name: US_CF优选_18
+  type: vless
+  server: 107.174.121.46
+  port: 443
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
+  tls: true
+  servername: xiemenghan0201.ccwu.cc
+  network: ws
+  client-fingerprint: chrome
+  ws-opts:
+    path: /
+    headers:
+      Host: xiemenghan0201.ccwu.cc
+- name: US_CF优选_19
+  type: vless
+  server: 104.129.166.131
+  port: 443
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
+  tls: true
+  servername: xiemenghan0201.ccwu.cc
+  network: ws
+  client-fingerprint: chrome
+  ws-opts:
+    path: /
+    headers:
+      Host: xiemenghan0201.ccwu.cc
+- name: US_CF优选_20
+  type: vless
+  server: 104.129.167.255
+  port: 443
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
+  tls: true
+  servername: xiemenghan0201.ccwu.cc
+  network: ws
+  client-fingerprint: chrome
+  ws-opts:
+    path: /
+    headers:
+      Host: xiemenghan0201.ccwu.cc
+proxy-groups:
+- name: 自动选择
+  type: url-test
+  proxies:
+  - US_CF优选_1
+  - US_CF优选_2
+  - US_CF优选_3
+  - US_CF优选_4
+  - US_CF优选_5
+  - US_CF优选_6
+  - US_CF优选_7
+  - US_CF优选_8
+  - US_CF优选_9
+  - US_CF优选_10
+  - US_CF优选_11
+  - US_CF优选_12
+  - US_CF优选_13
+  - US_CF优选_14
+  - US_CF优选_15
+  - US_CF优选_16
+  - US_CF优选_17
+  - US_CF优选_18
+  - US_CF优选_19
+  - US_CF优选_20
+  url: https://www.cloudflare.com/cdn-cgi/trace
+  interval: 300
+rules:
+- MATCH,自动选择
