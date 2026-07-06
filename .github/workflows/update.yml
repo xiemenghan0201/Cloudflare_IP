@@ -1,38 +1,162 @@
 name: Cloudflare IP Auto Update
 
 on:
+  # 定时执行：每6小时一次（UTC时间，对应北京时间 14/20/次日2/次日8点）
   schedule:
     - cron: '0 */6 * * *'
+  # 支持手动触发
   workflow_dispatch:
+  # 仅源码变更时触发，避免自动提交导致的循环运行
   push:
     branches: [ "main" ]
+    paths:
+      - 'generate.py'
+      - 'requirements.txt'
+      - '.github/workflows/*.yml'
 
 permissions:
   contents: write
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    # 双重保险：跳过机器人账号触发的运行，杜绝自循环
+    if: github.actor != 'github-actions[bot]'
 
     steps:
-      - name: Checkout repo
+      - name: 检出源码
         uses: actions/checkout@v5
 
-      - name: Setup Python
+      - name: 配置 Python 环境
         uses: actions/setup-python@v6
         with:
-          python-version: "3.11"
+          python-version: "3.11"  # 固定LTS稳定版，避免兼容性问题
+          cache: 'pip'            # 缓存依赖，加快运行速度
 
-      - name: Install dependencies
-        run: pip install pandas
-
-      - name: Run generator
-        run: python generate.py
-
-      - name: Commit changes
+      - name: 安装依赖（锁定版本，避免升级崩溃）
         run: |
-          git config user.name github-actions[bot]
-          git config user.email github-actions[bot]@users.noreply.github.com
-          git add result.csv || true
-          git commit -m "auto update result.csv" || exit 0
-          git push
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          else
+            pip install pandas==2.2.2 requests==2.32.3 PyYAML==6.0.1
+          fi
+
+      - name: 运行 IP 优选脚本
+        id: run_script
+        run: python generate.py
+        # 脚本失败不终止流程，自动容错
+        continue-on-error: true
+
+      - name: 生成 V2RayN + Clash 双格式订阅
+        if: steps.run_script.outcome == 'success'
+        run: |
+          python3 << 'EOF'
+          import pandas as pd
+          import base64
+          import json
+          import yaml
+
+          # 读取测速结果，取延迟最低的前10个IP（0代表第一列，可根据你的CSV格式调整）
+          df = pd.read_csv('result.csv')
+          top_ips = df.iloc[:10, 0].astype(str).tolist()
+
+          # ====================== 请修改为你自己的节点参数 ======================
+          UUID = "你的节点UUID"
+          PORT = 443
+          ALTER_ID = 0
+          CIPHER = "auto"
+          ENABLE_TLS = True
+          HOST = "你的域名，例如 cloudflare.com"
+          WS_PATH = "/"
+          REMARK_PREFIX = "CF优选_"
+          # ===================================================================
+
+          # 1. 生成 V2RayN 标准订阅（base64编码）
+          v2ray_links = []
+          for idx, ip in enumerate(top_ips):
+              remark = f"{REMARK_PREFIX}{idx+1}"
+              node = {
+                  "v": "2",
+                  "ps": remark,
+                  "add": ip,
+                  "port": str(PORT),
+                  "id": UUID,
+                  "aid": str(ALTER_ID),
+                  "scy": CIPHER,
+                  "net": "ws",
+                  "type": "none",
+                  "host": HOST,
+                  "path": WS_PATH,
+                  "tls": "tls" if ENABLE_TLS else "none"
+              }
+              json_str = json.dumps(node, ensure_ascii=False)
+              b64_node = base64.b64encode(json_str.encode('utf-8')).decode('utf-8')
+              v2ray_links.append(f"vmess://{b64_node}")
+
+          # 整体base64编码，符合V2RayN订阅标准
+          v2ray_full = '\n'.join(v2ray_links)
+          v2ray_b64 = base64.b64encode(v2ray_full.encode('utf-8')).decode('utf-8')
+          with open('v2ray.txt', 'w', encoding='utf-8') as f:
+              f.write(v2ray_b64)
+
+          # 2. 生成 Clash 标准订阅
+          proxies = []
+          for idx, ip in enumerate(top_ips):
+              remark = f"{REMARK_PREFIX}{idx+1}"
+              proxy = {
+                  "name": remark,
+                  "type": "vmess",
+                  "server": ip,
+                  "port": PORT,
+                  "uuid": UUID,
+                  "alterId": ALTER_ID,
+                  "cipher": CIPHER,
+                  "tls": ENABLE_TLS,
+                  "servername": HOST,
+                  "network": "ws",
+                  "ws-opts": {
+                      "path": WS_PATH,
+                      "headers": {"Host": HOST}
+                  }
+              }
+              proxies.append(proxy)
+
+          clash_config = {
+              "proxies": proxies,
+              "proxy-groups": [{
+                  "name": "自动选择",
+                  "type": "url-test",
+                  "proxies": [p["name"] for p in proxies],
+                  "url": "http://www.gstatic.com/generate_204",
+                  "interval": 300
+              }],
+              "rules": ["MATCH,自动选择"]
+          }
+
+          with open('clash.yaml', 'w', encoding='utf-8') as f:
+              yaml.dump(clash_config, f, allow_unicode=True, sort_keys=False)
+
+          print(f"成功生成 {len(top_ips)} 个节点的双格式订阅")
+          EOF
+        continue-on-error: true
+
+      - name: 整理发布文件
+        if: steps.run_script.outcome == 'success'
+        run: |
+          mkdir -p public
+          cp result.csv public/
+          cp v2ray.txt public/
+          cp clash.yaml public/
+          # 如有自定义首页index.html一并发布
+          if [ -f index.html ]; then cp index.html public/; fi
+
+      - name: 部署到 GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        if: steps.run_script.outcome == 'success'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          publish_branch: gh-pages
+          user_name: "github-actions[bot]"
+          user_email: "github-actions[bot]@users.noreply.github.com"
+          commit_message: "自动更新优选IP与订阅"
