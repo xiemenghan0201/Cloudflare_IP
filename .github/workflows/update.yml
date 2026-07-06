@@ -48,10 +48,16 @@ jobs:
           import pandas as pd
           import base64
           import yaml
+          import requests
           from urllib.parse import quote
 
           df = pd.read_csv('result.csv')
-          top_ips = df.iloc[:10, 0].astype(str).tolist()
+
+          # ========== 功能2：自动过滤测速失败的IP + 功能3：输出20个节点 ==========
+          # 规则：第二列为延迟（索引从0开始），只保留延迟>0的有效节点，取前20个最优
+          df_valid = df[df.iloc[:, 1] > 0].head(20)
+          top_ips = df_valid.iloc[:, 0].astype(str).tolist()
+          # ===================================================================
 
           # ====================== 节点参数（已自动填入） ======================
           UUID = "0c6857dd-cd86-4e02-870b-2f862baf016e"
@@ -64,10 +70,24 @@ jobs:
           REMARK_PREFIX = "CF优选_"
           # ===============================================================
 
+          # ========== 功能1：查询IP归属国家/地区（中文） ==========
+          def get_ip_country(ip):
+              try:
+                  resp = requests.get(f"http://ip-api.com/json/{ip}?lang=zh-CN", timeout=5)
+                  data = resp.json()
+                  if data.get("status") == "success":
+                      return data.get("country", "未知")
+                  return "未知"
+              except Exception:
+                  return "未知"
+          # =======================================================
+
           # 1. 生成 V2RayN 标准订阅（base64编码）
           vless_links = []
           for idx, ip in enumerate(top_ips):
-              remark = f"{REMARK_PREFIX}{idx+1}"
+              country = get_ip_country(ip)
+              # 别名格式：国家_前缀_序号，可自行调整顺序
+              remark = f"{country}_{REMARK_PREFIX}{idx+1}"
               link = (
                   f"vless://{UUID}@{ip}:{PORT}"
                   f"?encryption={ENCRYPTION}&security={'tls' if ENABLE_TLS else 'none'}"
@@ -85,7 +105,8 @@ jobs:
           # 2. 生成 Clash 标准订阅
           proxies = []
           for idx, ip in enumerate(top_ips):
-              remark = f"{REMARK_PREFIX}{idx+1}"
+              country = get_ip_country(ip)
+              remark = f"{country}_{REMARK_PREFIX}{idx+1}"
               proxy = {
                   "name": remark,
                   "type": "vless",
@@ -118,7 +139,7 @@ jobs:
           with open('clash.yaml', 'w', encoding='utf-8') as f:
               yaml.dump(clash_config, f, allow_unicode=True, sort_keys=False)
 
-          print(f"成功生成 {len(top_ips)} 个VLESS节点的双格式订阅")
+          print(f"成功生成 {len(top_ips)} 个带归属地的有效VLESS节点订阅")
           EOF
         continue-on-error: true
 
