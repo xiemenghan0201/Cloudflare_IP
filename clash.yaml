@@ -1,0 +1,159 @@
+proxies:
+- name: CF优选_1
+  type: vmess
+  server: 40.233.110.251
+  port: 443
+  uuid: 你的节点UUID
+  alterId: 0
+  cipher: auto
+  tls: true
+  servername: 你的域名，例如 cloudflare.com
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: 你的域名，例如 cloudflare.com
+- name: CF优选_2
+  type: vmess
+  server: 72.11.145.117
+  port: 443
+  uuid: 你的节点UUID
+  alterId: 0
+  cipher: auto
+  tls: true
+  servername: 你的域名，例如 cloudflare.com
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: 你的域名，例如 cloudflare.com
+- name: CF优选_3
+  type: vmess
+  server: 167.160.188.156
+  port: 443
+  uuid: 你的节点UUID
+  alterId: 0
+  cipher: auto
+  tls: true
+  servername: 你的域名，例如 cloudflare.com
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: 你的域名，例如 cloudflare.com
+- name: CF优选_4
+  type: vmess
+  server: 40.233.77.216
+  port: 443
+  uuid: 你的节点UUID
+  alterId: 0
+  cipher: auto
+  tls: true
+  servername: 你的域名，例如 cloudflare.com
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: 你的域名，例如 cloudflare.com
+- name: CF优选_5
+  type: vmess
+  server: 155.248.216.138
+  port: 443
+  uuid: 你的节点UUID
+  alterId: 0
+  cipher: auto
+  tls: true
+  servername: 你的域名，例如 cloudflare.com
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: 你的域名，例如 cloudflare.com
+- name: CF优选_6
+  type: vmess
+  server: 45.133.16.41
+  port: 443
+  uuid: 你的节点UUID
+  alterId: 0
+  cipher: auto
+  tls: true
+  servername: 你的域名，例如 cloudflare.com
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: 你的域名，例如 cloudflare.com
+- name: CF优选_7
+  type: vmess
+  server: 65.49.232.101
+  port: 443
+  uuid: 你的节点UUID
+  alterId: 0
+  cipher: auto
+  tls: true
+  servername: 你的域名，例如 cloudflare.com
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: 你的域名，例如 cloudflare.com
+- name: CF优选_8
+  type: vmess
+  server: 179.255.184.6
+  port: 443
+  uuid: 你的节点UUID
+  alterId: 0
+  cipher: auto
+  tls: true
+  servername: 你的域名，例如 cloudflare.com
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: 你的域名，例如 cloudflare.com
+- name: CF优选_9
+  type: vmess
+  server: 40.233.71.238
+  port: 443
+  uuid: 你的节点UUID
+  alterId: 0
+  cipher: auto
+  tls: true
+  servername: 你的域名，例如 cloudflare.com
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: 你的域名，例如 cloudflare.com
+- name: CF优选_10
+  type: vmess
+  server: 72.11.146.199
+  port: 443
+  uuid: 你的节点UUID
+  alterId: 0
+  cipher: auto
+  tls: true
+  servername: 你的域名，例如 cloudflare.com
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: 你的域名，例如 cloudflare.com
+proxy-groups:
+- name: 自动选择
+  type: url-test
+  proxies:
+  - CF优选_1
+  - CF优选_2
+  - CF优选_3
+  - CF优选_4
+  - CF优选_5
+  - CF优选_6
+  - CF优选_7
+  - CF优选_8
+  - CF优选_9
+  - CF优选_10
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+rules:
+- MATCH,自动选择
