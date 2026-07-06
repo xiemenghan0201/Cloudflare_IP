@@ -41,25 +41,30 @@ jobs:
         run: python generate.py
         continue-on-error: true
 
-      - name: 生成 V2RayN + Clash 双格式订阅（VLESS版）
+      - name: 生成 V2RayN + Clash 双格式订阅（VLESS容错版）
         if: steps.run_script.outcome == 'success'
         run: |
           python3 << 'EOF'
+          import os
           import pandas as pd
           import base64
           import yaml
           from urllib.parse import quote
 
-          # 读取你的CSV文件
-          df = pd.read_csv('result.csv')
+          # 校验csv是否存在
+          if not os.path.exists("result.csv"):
+              print("错误：未生成result.csv，跳过订阅")
+              exit(1)
 
-          # ========== 完全适配你的CSV结构的配置区 ==========
-          IP_COL_INDEX = 0          # IP地址列索引
-          COUNTRY_COL_INDEX = 4     # 国家归属列索引（CF归属国）
-          DELAY_COL_INDEX = 7       # 延迟列索引（TLS延迟(ms)，和你的节点TLS配置匹配）
-          SPEED_COL_INDEX = 3       # 速度列索引（速度(Mbps)）
-          OUTPUT_COUNT = 20          # 输出节点数量
-          # 你的节点固定参数
+          df = pd.read_csv('result.csv')
+          print(f"CSV总行数：{len(df)}，列名：{list(df.columns)}")
+
+          # ========== 适配你的CSV配置区 ==========
+          IP_COL_INDEX = 0
+          COUNTRY_COL_INDEX = 4
+          DELAY_COL_INDEX = 7
+          SPEED_COL_INDEX = 3
+          OUTPUT_COUNT = 20
           UUID = "0c6857dd-cd86-4e02-870b-2f862baf016e"
           PORT = 443
           ENCRYPTION = "none"
@@ -70,25 +75,28 @@ jobs:
           REMARK_PREFIX = "CF优选_"
           # =====================================================
 
-          # 1. 过滤有效节点：延迟>0、速度>0，剔除测速失败的IP
-          df_valid = df[(df.iloc[:, DELAY_COL_INDEX] > 0) & (df.iloc[:, SPEED_COL_INDEX] > 0)]
-          # 2. 排序：优先按速度降序（速度最快），再按延迟升序（延迟最低），拿到最优IP
-          df_sorted = df_valid.sort_values(by=[SPEED_COL_INDEX, DELAY_COL_INDEX], ascending=[False, True])
-          # 3. 取前20个最优节点
-          df_top = df_sorted.head(OUTPUT_COUNT)
-          top_ips = df_top.iloc[:, IP_COL_INDEX].astype(str).tolist()
+          # 过滤有效节点
+          try:
+              df_valid = df[(df.iloc[:, DELAY_COL_INDEX] > 0) & (df.iloc[:, SPEED_COL_INDEX] > 0)]
+          except Exception as e:
+              print(f"读取延迟/速度列失败：{e}，直接取全部IP")
+              df_valid = df
 
-          # 空数据兜底：无有效IP时优雅退出
-          if len(top_ips) == 0:
-              print("无有效测速节点，跳过订阅生成")
+          if len(df_valid) == 0:
+              print("无有效测速IP，跳过订阅生成")
               exit(0)
 
-          # 1. 生成 V2RayN 标准订阅（base64编码）
+          # 排序取前20
+          df_sorted = df_valid.sort_values(by=[SPEED_COL_INDEX, DELAY_COL_INDEX], ascending=[False, True])
+          df_top = df_sorted.head(OUTPUT_COUNT)
+          top_ips = df_top.iloc[:, IP_COL_INDEX].astype(str).tolist()
+          print(f"筛选后有效节点数量：{len(top_ips)}")
+
+          # 生成V2RAY订阅
           vless_links = []
           for idx, (_, row) in enumerate(df_top.iterrows()):
               ip = str(row.iloc[IP_COL_INDEX])
               country = str(row.iloc[COUNTRY_COL_INDEX]).strip()
-              # 节点别名：国家_前缀_序号，可自行调整顺序
               remark = f"{country}_{REMARK_PREFIX}{idx+1}"
               link = (
                   f"vless://{UUID}@{ip}:{PORT}"
@@ -103,8 +111,9 @@ jobs:
           v2ray_b64 = base64.b64encode(v2ray_full.encode('utf-8')).decode('utf-8')
           with open('v2ray.txt', 'w', encoding='utf-8') as f:
               f.write(v2ray_b64)
+          print("已输出 v2ray.txt")
 
-          # 2. 生成 Clash 标准订阅
+          # 生成Clash订阅
           proxies = []
           for idx, (_, row) in enumerate(df_top.iterrows()):
               ip = str(row.iloc[IP_COL_INDEX])
@@ -133,7 +142,7 @@ jobs:
                   "name": "自动选择",
                   "type": "url-test",
                   "proxies": [p["name"] for p in proxies],
-                  "url": "http://www.gstatic.com/generate_204",
+                  "url": "https://www.cloudflare.com/cdn-cgi/trace",
                   "interval": 300
               }],
               "rules": ["MATCH,自动选择"]
@@ -141,23 +150,36 @@ jobs:
 
           with open('clash.yaml', 'w', encoding='utf-8') as f:
               yaml.dump(clash_config, f, allow_unicode=True, sort_keys=False)
-
-          print(f"成功生成 {len(top_ips)} 个带归属地的最优VLESS节点订阅")
-          print(f"节点范围：速度 {df_top.iloc[:, SPEED_COL_INDEX].min():.2f}~{df_top.iloc[:, SPEED_COL_INDEX].max():.2f} Mbps，延迟 {df_top.iloc[:, DELAY_COL_INDEX].min():.2f}~{df_top.iloc[:, DELAY_COL_INDEX].max():.2f} ms")
+          print("已输出 clash.yaml")
           EOF
         continue-on-error: true
 
-      - name: 整理发布文件（全容错）
+      - name: 整理发布文件（带首页index.html，解决404）
         if: steps.run_script.outcome == 'success'
         run: |
           mkdir -p public
-          # 只复制存在的文件，不存在则跳过不报错
+          # 生成首页
+          cat > public/index.html << 'HTML'
+          <!DOCTYPE html>
+          <html>
+          <head>
+          <meta charset="utf-8">
+          <title>CF优选IP订阅</title>
+          </head>
+          <body>
+          <h2>订阅地址</h2>
+          <p>V2RayN订阅：<a href="./v2ray.txt">./v2ray.txt</a></p>
+          <p>Clash订阅：<a href="./clash.yaml">./clash.yaml</a></p>
+          <p>测速原始数据：<a href="./result.csv">./result.csv</a></p>
+          </body>
+          </html>
+          HTML
+          # 仅复制存在的文件
           [ -f result.csv ] && cp result.csv public/
           [ -f v2ray.txt ] && cp v2ray.txt public/
           [ -f clash.yaml ] && cp clash.yaml public/
-          [ -f index.html ] && cp index.html public/
-          echo "发布成功，目录文件清单："
-          ls -la public/
+          echo "public目录文件列表："
+          ls public/
 
       - name: 部署到 GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
