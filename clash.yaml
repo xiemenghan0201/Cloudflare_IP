@@ -1,144 +1,134 @@
 proxies:
 - name: CF优选_1
-  type: vmess
+  type: vless
   server: 40.233.110.251
   port: 443
-  uuid: 你的节点UUID
-  alterId: 0
-  cipher: auto
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
   tls: true
-  servername: 你的域名，例如 cloudflare.com
+  servername: xiemenghan0201.ccwu.cc
   network: ws
+  client-fingerprint: chrome
   ws-opts:
     path: /
     headers:
-      Host: 你的域名，例如 cloudflare.com
+      Host: xiemenghan0201.ccwu.cc
 - name: CF优选_2
-  type: vmess
+  type: vless
   server: 72.11.145.117
   port: 443
-  uuid: 你的节点UUID
-  alterId: 0
-  cipher: auto
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
   tls: true
-  servername: 你的域名，例如 cloudflare.com
+  servername: xiemenghan0201.ccwu.cc
   network: ws
+  client-fingerprint: chrome
   ws-opts:
     path: /
     headers:
-      Host: 你的域名，例如 cloudflare.com
+      Host: xiemenghan0201.ccwu.cc
 - name: CF优选_3
-  type: vmess
+  type: vless
   server: 167.160.188.156
   port: 443
-  uuid: 你的节点UUID
-  alterId: 0
-  cipher: auto
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
   tls: true
-  servername: 你的域名，例如 cloudflare.com
+  servername: xiemenghan0201.ccwu.cc
   network: ws
+  client-fingerprint: chrome
   ws-opts:
     path: /
     headers:
-      Host: 你的域名，例如 cloudflare.com
+      Host: xiemenghan0201.ccwu.cc
 - name: CF优选_4
-  type: vmess
+  type: vless
   server: 40.233.77.216
   port: 443
-  uuid: 你的节点UUID
-  alterId: 0
-  cipher: auto
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
   tls: true
-  servername: 你的域名，例如 cloudflare.com
+  servername: xiemenghan0201.ccwu.cc
   network: ws
+  client-fingerprint: chrome
   ws-opts:
     path: /
     headers:
-      Host: 你的域名，例如 cloudflare.com
+      Host: xiemenghan0201.ccwu.cc
 - name: CF优选_5
-  type: vmess
+  type: vless
   server: 155.248.216.138
   port: 443
-  uuid: 你的节点UUID
-  alterId: 0
-  cipher: auto
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
   tls: true
-  servername: 你的域名，例如 cloudflare.com
+  servername: xiemenghan0201.ccwu.cc
   network: ws
+  client-fingerprint: chrome
   ws-opts:
     path: /
     headers:
-      Host: 你的域名，例如 cloudflare.com
+      Host: xiemenghan0201.ccwu.cc
 - name: CF优选_6
-  type: vmess
+  type: vless
   server: 45.133.16.41
   port: 443
-  uuid: 你的节点UUID
-  alterId: 0
-  cipher: auto
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
   tls: true
-  servername: 你的域名，例如 cloudflare.com
+  servername: xiemenghan0201.ccwu.cc
   network: ws
+  client-fingerprint: chrome
   ws-opts:
     path: /
     headers:
-      Host: 你的域名，例如 cloudflare.com
+      Host: xiemenghan0201.ccwu.cc
 - name: CF优选_7
-  type: vmess
+  type: vless
   server: 65.49.232.101
   port: 443
-  uuid: 你的节点UUID
-  alterId: 0
-  cipher: auto
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
   tls: true
-  servername: 你的域名，例如 cloudflare.com
+  servername: xiemenghan0201.ccwu.cc
   network: ws
+  client-fingerprint: chrome
   ws-opts:
     path: /
     headers:
-      Host: 你的域名，例如 cloudflare.com
+      Host: xiemenghan0201.ccwu.cc
 - name: CF优选_8
-  type: vmess
+  type: vless
   server: 179.255.184.6
   port: 443
-  uuid: 你的节点UUID
-  alterId: 0
-  cipher: auto
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
   tls: true
-  servername: 你的域名，例如 cloudflare.com
+  servername: xiemenghan0201.ccwu.cc
   network: ws
+  client-fingerprint: chrome
   ws-opts:
     path: /
     headers:
-      Host: 你的域名，例如 cloudflare.com
+      Host: xiemenghan0201.ccwu.cc
 - name: CF优选_9
-  type: vmess
+  type: vless
   server: 40.233.71.238
   port: 443
-  uuid: 你的节点UUID
-  alterId: 0
-  cipher: auto
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
   tls: true
-  servername: 你的域名，例如 cloudflare.com
+  servername: xiemenghan0201.ccwu.cc
   network: ws
+  client-fingerprint: chrome
   ws-opts:
     path: /
     headers:
-      Host: 你的域名，例如 cloudflare.com
+      Host: xiemenghan0201.ccwu.cc
 - name: CF优选_10
-  type: vmess
+  type: vless
   server: 72.11.146.199
   port: 443
-  uuid: 你的节点UUID
-  alterId: 0
-  cipher: auto
+  uuid: 0c6857dd-cd86-4e02-870b-2f862baf016e
   tls: true
-  servername: 你的域名，例如 cloudflare.com
+  servername: xiemenghan0201.ccwu.cc
   network: ws
+  client-fingerprint: chrome
   ws-opts:
     path: /
     headers:
-      Host: 你的域名，例如 cloudflare.com
+      Host: xiemenghan0201.ccwu.cc
 proxy-groups:
 - name: 自动选择
   type: url-test
