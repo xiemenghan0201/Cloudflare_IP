@@ -28,7 +28,7 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: 安装依赖（锁定版本，避免升级崩溃）
+      - name: 安装依赖（锁定版本）
         run: |
           if [ -f requirements.txt ]; then
             pip install -r requirements.txt
@@ -41,52 +41,43 @@ jobs:
         run: python generate.py
         continue-on-error: true
 
-      - name: 生成 V2RayN + Clash 双格式订阅
+      - name: 生成 V2RayN + Clash 双格式订阅（VLESS版）
         if: steps.run_script.outcome == 'success'
         run: |
           python3 << 'EOF'
           import pandas as pd
           import base64
-          import json
           import yaml
+          from urllib.parse import quote
 
           df = pd.read_csv('result.csv')
           top_ips = df.iloc[:10, 0].astype(str).tolist()
 
-          # ====================== 请修改为你自己的节点参数 ======================
-          UUID = "你的节点UUID"
+          # ====================== 节点参数（已自动填入） ======================
+          UUID = "0c6857dd-cd86-4e02-870b-2f862baf016e"
           PORT = 443
-          ALTER_ID = 0
-          CIPHER = "auto"
+          ENCRYPTION = "none"
           ENABLE_TLS = True
-          HOST = "你的域名，例如 cloudflare.com"
+          HOST = "xiemenghan0201.ccwu.cc"
           WS_PATH = "/"
+          TLS_FINGERPRINT = "chrome"
           REMARK_PREFIX = "CF优选_"
-          # ===================================================================
+          # ===============================================================
 
-          # 1. 生成 V2RayN 标准订阅
-          v2ray_links = []
+          # 1. 生成 V2RayN 标准订阅（base64编码）
+          vless_links = []
           for idx, ip in enumerate(top_ips):
               remark = f"{REMARK_PREFIX}{idx+1}"
-              node = {
-                  "v": "2",
-                  "ps": remark,
-                  "add": ip,
-                  "port": str(PORT),
-                  "id": UUID,
-                  "aid": str(ALTER_ID),
-                  "scy": CIPHER,
-                  "net": "ws",
-                  "type": "none",
-                  "host": HOST,
-                  "path": WS_PATH,
-                  "tls": "tls" if ENABLE_TLS else "none"
-              }
-              json_str = json.dumps(node, ensure_ascii=False)
-              b64_node = base64.b64encode(json_str.encode('utf-8')).decode('utf-8')
-              v2ray_links.append(f"vmess://{b64_node}")
+              link = (
+                  f"vless://{UUID}@{ip}:{PORT}"
+                  f"?encryption={ENCRYPTION}&security={'tls' if ENABLE_TLS else 'none'}"
+                  f"&sni={HOST}&fp={TLS_FINGERPRINT}&type=ws"
+                  f"&host={HOST}&path={quote(WS_PATH)}"
+                  f"#{quote(remark)}"
+              )
+              vless_links.append(link)
 
-          v2ray_full = '\n'.join(v2ray_links)
+          v2ray_full = '\n'.join(vless_links)
           v2ray_b64 = base64.b64encode(v2ray_full.encode('utf-8')).decode('utf-8')
           with open('v2ray.txt', 'w', encoding='utf-8') as f:
               f.write(v2ray_b64)
@@ -97,15 +88,14 @@ jobs:
               remark = f"{REMARK_PREFIX}{idx+1}"
               proxy = {
                   "name": remark,
-                  "type": "vmess",
+                  "type": "vless",
                   "server": ip,
                   "port": PORT,
                   "uuid": UUID,
-                  "alterId": ALTER_ID,
-                  "cipher": CIPHER,
                   "tls": ENABLE_TLS,
                   "servername": HOST,
                   "network": "ws",
+                  "client-fingerprint": TLS_FINGERPRINT,
                   "ws-opts": {
                       "path": WS_PATH,
                       "headers": {"Host": HOST}
@@ -128,7 +118,7 @@ jobs:
           with open('clash.yaml', 'w', encoding='utf-8') as f:
               yaml.dump(clash_config, f, allow_unicode=True, sort_keys=False)
 
-          print(f"成功生成 {len(top_ips)} 个节点的双格式订阅")
+          print(f"成功生成 {len(top_ips)} 个VLESS节点的双格式订阅")
           EOF
         continue-on-error: true
 
