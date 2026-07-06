@@ -59,11 +59,11 @@ jobs:
           df = pd.read_csv('result.csv')
           print(f"CSV总行数：{len(df)}，列名：{list(df.columns)}")
 
-          # ========== 适配你的CSV配置区 ==========
+          # ========== 适配你的CSV索引配置 ==========
           IP_COL_INDEX = 0
           COUNTRY_COL_INDEX = 4
-          DELAY_COL_INDEX = 7
-          SPEED_COL_INDEX = 3
+          DELAY_COL_INDEX = 7  # TLS延迟列
+          SPEED_COL_INDEX = 3  # 速度列
           OUTPUT_COUNT = 20
           UUID = "0c6857dd-cd86-4e02-870b-2f862baf016e"
           PORT = 443
@@ -75,7 +75,7 @@ jobs:
           REMARK_PREFIX = "CF优选_"
           # =====================================================
 
-          # 过滤有效节点
+          # 过滤有效节点：速度、延迟大于0
           try:
               df_valid = df[(df.iloc[:, DELAY_COL_INDEX] > 0) & (df.iloc[:, SPEED_COL_INDEX] > 0)]
           except Exception as e:
@@ -86,8 +86,11 @@ jobs:
               print("无有效测速IP，跳过订阅生成")
               exit(0)
 
-          # 排序取前20
-          df_sorted = df_valid.sort_values(by=[SPEED_COL_INDEX, DELAY_COL_INDEX], ascending=[False, True])
+          # 纯数字索引排序，彻底解决KeyError
+          df_sorted = df_valid.sort_values(
+              by=[df_valid.columns[SPEED_COL_INDEX], df_valid.columns[DELAY_COL_INDEX]],
+              ascending=[False, True]
+          )
           df_top = df_sorted.head(OUTPUT_COUNT)
           top_ips = df_top.iloc[:, IP_COL_INDEX].astype(str).tolist()
           print(f"筛选后有效节点数量：{len(top_ips)}")
